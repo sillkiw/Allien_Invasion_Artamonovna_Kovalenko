@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 from settings import Settings 
+from ship import Ship
 
 
 
@@ -12,6 +13,7 @@ class AlienInvasion:
         self.settings = Settings()
         self.screen = pg.display.set_mode((self.settings.width, self.settings.height))
         self.background = pg.transform.scale(self.settings.load_image, (self.settings.width, self.settings.height))
+        self.ship = Ship(self.screen)
         pg.display.set_caption("Alien Invasion")
 
     def run_game(self):
@@ -20,6 +22,7 @@ class AlienInvasion:
                 if event.type == pg.QUIT:
                     sys.exit()
             self.screen.blit(self.background, (0, 0))
+            self.ship.blitme()
             pg.display.flip()
 
 if __name__ == '__main__':
