@@ -21,6 +21,7 @@ class AlienInvasion:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     sys.exit()
+          
             self.screen.blit(self.background, (0, 0))
             self.ship.blitme()
             pg.display.flip()
