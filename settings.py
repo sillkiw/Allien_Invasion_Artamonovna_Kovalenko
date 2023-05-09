@@ -6,4 +6,4 @@ class Settings():
         self.screen_height = 600
         self.bg_image = pg.image.load("images/background.jpg")
         self.shp_image = pg.image.load("images/ship.png")
-        self.ship_speed = 5.6
+        self.ship_speed = 1.5
