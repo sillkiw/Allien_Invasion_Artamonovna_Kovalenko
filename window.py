@@ -14,7 +14,7 @@ class AlienInvasion:
         self.screen = pg.display.set_mode((self.settings.width, self.settings.height))
         self.background = pg.transform.scale(self.settings.load_image, (self.settings.width, self.settings.height))
 
-        self.ship = Ship(self.screen)
+        self.ship = Ship(self)
         pg.display.set_caption("Alien Invasion")
 
     def run_game(self):
@@ -34,18 +34,19 @@ class AlienInvasion:
             if event.type == pg.QUIT:
                 sys.exit()
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_RIGHT:
-                    self.ship.moving_right = True
-                elif event.key == pg.K_LEFT:
-                    self.ship.moving_left = True
-            
-            
+              self._check_keydown_events(event)
             elif event.type == pg.KEYUP:
-                if event.key == pg.K_RIGHT:
+              self._check_keyup_events(event)   
+    def _check_keydown_events(self,event):
+          if event.key == pg.K_RIGHT:
+                    self.ship.moving_right = True
+          elif event.key == pg.K_LEFT:
+                    self.ship.moving_left = True
+    def _check_keyup_events(self,event):
+          if event.key == pg.K_RIGHT:
                     self.ship.moving_right=False
-                elif event.key == pg.K_LEFT:
+          elif event.key == pg.K_LEFT:
                     self.ship.moving_left = False
-
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
