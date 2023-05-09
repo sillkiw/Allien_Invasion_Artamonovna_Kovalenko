@@ -11,7 +11,9 @@ class AlienInvasion:
     def __init__(self):
         pg.init()
         self.settings = Settings()
-        self.screen = pg.display.set_mode((self.settings.width, self.settings.height))
+        self.screen = pg.display.set_mode((0,0),pg.FULLSCREEN)
+        self.settings.screen_width = self.screen.get_rect().width
+        self.settings.screen_height = self.screen.get_rect().height
         self.background = pg.transform.scale(self.settings.load_image, (self.settings.width, self.settings.height))
 
         self.ship = Ship(self)
@@ -42,6 +44,8 @@ class AlienInvasion:
                     self.ship.moving_right = True
           elif event.key == pg.K_LEFT:
                     self.ship.moving_left = True
+          elif event.key == pg.K_q:
+            sys.exit()
     def _check_keyup_events(self,event):
           if event.key == pg.K_RIGHT:
                     self.ship.moving_right=False
