@@ -13,6 +13,7 @@ class AlienInvasion:
         self.settings = Settings()
         self.screen = pg.display.set_mode((self.settings.width, self.settings.height))
         self.background = pg.transform.scale(self.settings.load_image, (self.settings.width, self.settings.height))
+      
         self.ship = Ship(self.screen)
         pg.display.set_caption("Alien Invasion")
 
