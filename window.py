@@ -2,7 +2,7 @@ import sys
 import pygame as pg
 from settings import Settings 
 from ship import Ship
-
+from bullet import Bullet
 
 
 
@@ -17,18 +17,29 @@ class AlienInvasion:
         self.background = pg.transform.scale(self.settings.bg_image, (self.settings.screen_width, self.settings.screen_height))
 
         self.ship = Ship(self)
+        self.bullets = pg.sprite.Group()
         pg.display.set_caption("Alien Invasion")
 
     def run_game(self):
         while True:
             self._check_events()
             self.ship.update()
+            self._update_bullets()
             self._update_screen()
-          
+
+    def _update_bullets(self):
+        self.bullets.update()
+
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+
 
     def _update_screen(self):
         self.screen.blit(self.background, (0, 0))
         self.ship.blitme()
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
         pg.display.flip()
 
     def _check_events(self):
@@ -38,14 +49,22 @@ class AlienInvasion:
             elif event.type == pg.KEYDOWN:
               self._check_keydown_events(event)
             elif event.type == pg.KEYUP:
-              self._check_keyup_events(event)   
+              self._check_keyup_events(event)  
+         
+    def _fire_bullet(self):
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
     def _check_keydown_events(self,event):
           if event.key == pg.K_RIGHT:
                     self.ship.moving_right = True
           elif event.key == pg.K_LEFT:
                     self.ship.moving_left = True
           elif event.key == pg.K_q:
-            sys.exit()
+                    sys.exit()
+          elif event.key == pg.K_SPACE:
+                    self._fire_bullet()
     def _check_keyup_events(self,event):
           if event.key == pg.K_RIGHT:
                     self.ship.moving_right=False
