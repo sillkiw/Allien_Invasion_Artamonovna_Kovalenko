@@ -3,7 +3,7 @@ import pygame as pg
 from settings import Settings 
 from ship import Ship
 from bullet import Bullet
-
+from allien import Alien
 
 
 class AlienInvasion:
@@ -18,6 +18,8 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pg.sprite.Group()
+        self.aliens = pg.sprite.Group()
+        self._create_fleet()
         pg.display.set_caption("Alien Invasion")
 
     def run_game(self):
@@ -34,12 +36,15 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
-
+    def _create_fleet(self):
+        alien = Alien(self)
+        self.aliens.add(alien)
     def _update_screen(self):
         self.screen.blit(self.background, (0, 0))
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+        self.aliens.draw(self.screen)
         pg.display.flip()
 
     def _check_events(self):
