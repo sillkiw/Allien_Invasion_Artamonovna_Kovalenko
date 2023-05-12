@@ -11,9 +11,9 @@ class Settings():
         self.shp_image = pg.image.load("images/ship.png")
         
         #Скорость корабля
-        self.ship_speed = 4.5
+        self.ship_speed = 6.5
 
-        self.bullet_speed = 3.5
+        self.bullet_speed = 7.5
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (0,0,255)
