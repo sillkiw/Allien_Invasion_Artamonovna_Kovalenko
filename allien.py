@@ -6,7 +6,7 @@ class Alien(Sprite):
         super().__init__()
         self.screen = ai_game.screen
 
-        self.image = pg.image.load('images/aliensh.png')
+        self.image = pg.transform.scale(pg.image.load('images/aliensh.png').convert_alpha(),(300,370))
         self.rect = self.image.get_rect()
 
         self.rect.x = self.rect.width
