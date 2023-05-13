@@ -5,11 +5,11 @@ class Ship():
         self.settings = ai_game.settings
         self.screen_rect = self.screen.get_rect()
     
-        self.image = pg.transform.scale(ai_game.settings.shp_image.convert_alpha(),(200,200))
+        self.image = pg.transform.scale(ai_game.settings.shp_image.convert_alpha(),(90,90))
         self.rect = self.image.get_rect()
     
-        self.rect.midbottom = self.screen_rect.midbottom 
-         
+        self.rect.midbottom = self.screen_rect.midbottom
+      
         self.x = float(self.rect.x)
 
          #Флаги перемещения
