@@ -1,6 +1,6 @@
 import pygame as pg
 from pygame.sprite import Sprite
-
+from random import choice
 class Bullet(Sprite):
     def __init__(self,ai_game):
         super().__init__()
@@ -11,7 +11,8 @@ class Bullet(Sprite):
         self.rect = pg.Rect(0,0,self.settings.bullet_width,
         self.settings.bullet_height)
         self.rect.midtop = ai_game.ship.rect.midtop
-        self.rect.y += 50
+        self.rect.x += choice([-10,10])
+        self.rect.y += 10
      
         
         self.y = float(self.rect.y)
