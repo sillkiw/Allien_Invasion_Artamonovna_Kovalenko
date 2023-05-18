@@ -1,12 +1,13 @@
 import sys
 import pygame as pg
+import random
+from time import sleep
 from settings import Settings 
 from ship import Ship
 from bullet import Bullet
 from allien import Alien
-import random
-from time import sleep
 from game_stats import GameStats
+from button import Button
 
 
 class AlienInvasion:
@@ -28,6 +29,9 @@ class AlienInvasion:
     
         self._create_fleet()
         pg.display.set_caption("Alien Invasion")
+
+        #создание кнопки Play
+        self.play_button = Button(self, "Play")
 
     def run_game(self):
         """Основной цикл"""
@@ -58,6 +62,8 @@ class AlienInvasion:
             sleep(0.5)
         else:
             self.stats.game_active = False
+            #вернуть видимость курсору мыши после завершения игры
+            pg.mouse.set_visible(True)
 
     def _create_fleet(self):
         """Создание флота пришельцев"""
@@ -119,6 +125,11 @@ class AlienInvasion:
             bullet.draw_bullet()
         #отрисовка пришельца
         self.aliens.draw(self.screen)
+
+        #отображение кнопки Play поверх других поверхностей в том случае, если игра неактивна
+        if not self.stats.game_active:
+            self.play_button.draw_button()
+
         pg.display.flip()
     
     def _update_bullets(self):
@@ -140,6 +151,10 @@ class AlienInvasion:
         # Уничтожение существующих снарядов и создание нового флота.
             self.bullets.empty()
             self._create_fleet()
+            #увеличение скорости
+            self.settings.increase_speed()
+
+
 
     def _update_aliens(self):
         """Обновление позиций пришельцев"""
@@ -153,7 +168,7 @@ class AlienInvasion:
 
 
     def _check_events(self):
-        """Управление событиями(клавиш)"""
+        """Управление событиями(клавиш и мыши)"""
         for event in pg.event.get():
             #выход
             if event.type == pg.QUIT:
@@ -162,7 +177,34 @@ class AlienInvasion:
               self._check_keydown_events(event)
             elif event.type == pg.KEYUP:
               self._check_keyup_events(event)  
+            #отслеживание нажатия мыши для запуска игры
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                mouse_pos = pg.mouse.get_pos()
+                self._check_play_button(mouse_pos)
     
+    def _check_play_button(self, mouse_pos):
+        """Запуск новой игры только при нажатии кнопки Play."""
+        #отслеживание области нажатия мыши
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if button_clicked and not self.stats.game_active:
+            #сброс игровых настроек(скорости)
+            self.settings.initialize_dynamic_settings()
+
+            #сброс игровой статистики
+            self.stats.reset_stats()
+            self.stats.game_active = True
+            
+            #очистка списков пришельцев и снарядов
+            self.aliens.empty()
+            self.bullets.empty()
+            
+            #оздание нового флота и размещение корабля в центре
+            self._create_fleet()
+            self.ship.center_ship()
+
+            #скрытие курсора мыши
+            pg.mouse.set_visible(False)
+
     def _check_keydown_events(self,event):
           """Отслеживание нажатия клавиш"""
           if event.key == pg.K_RIGHT:
