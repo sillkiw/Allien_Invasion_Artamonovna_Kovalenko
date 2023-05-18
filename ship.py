@@ -17,7 +17,7 @@ class Ship():
       
         self.x = float(self.rect.x)
 
-         #Флаги перемещения
+        #Флаги перемещения
         self.moving_right = False
         self.moving_left = False
     
