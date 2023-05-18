@@ -2,6 +2,7 @@ import pygame as pg
 class Settings():
     """Для хранения параметров игры"""
     def __init__(self):
+        """Инициализвция статических параметров игры"""
         #Параметры экрана
         self.screen_width = 1000
         self.screen_height = 600
@@ -25,8 +26,28 @@ class Settings():
         #параметры пришельцев
 
         #скорость движения в сторону
-        self.alien_speed = 40
+        self.alien_speed = 4
         #скорость снижения
         self.fleet_drop_speed = 30
         #направление(1 - вправо, -1 - влево)
         self.fleet_direction = 1
+
+        # Темп ускорения игры
+        self.speedup_scale = 1.2
+
+        #инициализация параметров для усложнения игры
+        self.initialize_dynamic_settings()
+
+    def initialize_dynamic_settings(self):
+        """Задание начальных параметров, изменяющихся в ходе игры"""            
+        self.ship_speed_factor = 1.5
+        self.bullet_speed_factor = 3.0
+        self.alien_speed_factor = 1.0
+        #fleet_direction = 1 обозначает движение вправо, а -1 - влево            
+        self.fleet_direction = 1
+
+    def increase_speed(self):
+        """Увеличение скорости"""
+        self.ship_speed_factor *= self.speedup_scale
+        self.bullet_speed_factor *= self.speedup_scale
+        self.alien_speed_factor *= self.speedup_scale
