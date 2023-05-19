@@ -8,6 +8,7 @@ from bullet import Bullet
 from allien import Alien
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion:
@@ -29,6 +30,10 @@ class AlienInvasion:
     
         self._create_fleet()
         pg.display.set_caption("Alien Invasion")
+
+        #создание для хранения статистики и панели результатов
+        self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         #создание кнопки Play
         self.play_button = Button(self, "Play")
@@ -126,6 +131,9 @@ class AlienInvasion:
         #отрисовка пришельца
         self.aliens.draw(self.screen)
 
+        #вывод счета
+        self.sb.show_score()
+
         #отображение кнопки Play поверх других поверхностей в том случае, если игра неактивна
         if not self.stats.game_active:
             self.play_button.draw_button()
@@ -145,6 +153,14 @@ class AlienInvasion:
         """проверка попадания в пришельца и последующее уничтожение снаряда и пришельца"""
         #(True, True - нужно ли удалять снаряд пришельца и  соответственно)      
         collisions = pg.sprite.groupcollide(self.bullets,self.aliens,True,True)
+        #обновление счета
+        if collisions:
+            self.stats.score += self.settings.alien_points
+            #1 пришелец += очки за него
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            #новая картинка счета
+            self.sb.prep_score()
         
         #есть ли еще пришельцы
         if not self.aliens:
@@ -193,12 +209,15 @@ class AlienInvasion:
             #сброс игровой статистики
             self.stats.reset_stats()
             self.stats.game_active = True
+            self.sb.prep_score()
+
+        
             
             #очистка списков пришельцев и снарядов
             self.aliens.empty()
             self.bullets.empty()
             
-            #оздание нового флота и размещение корабля в центре
+            #создание нового флота и размещение корабля в центре
             self._create_fleet()
             self.ship.center_ship()
 
