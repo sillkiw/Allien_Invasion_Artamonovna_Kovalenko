@@ -8,7 +8,7 @@ class GameStats():
 
         #запуск игры в неактивном состоянии
         self.game_active = False
-        
+
         #флаг для завершения игры после потери последнего корабля
         self.game_active = True
 
@@ -17,3 +17,6 @@ class GameStats():
     def reset_stats(self):
         """Инициализация статистики, изменяющейся в ходе игры"""
         self.ships_left = self.settings.ship_limit
+
+        #начальное число очков(сбрасывается при начале игры)
+        self.score = 0
