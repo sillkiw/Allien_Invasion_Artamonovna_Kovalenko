@@ -1,9 +1,13 @@
 import pygame as pg
-class Ship():
+from pygame.sprite import Sprite
+
+class Ship(Sprite):
     """Управление коряблем"""
     def __init__(self,ai_game):
         
         #создание корабля(корабль рассматривается как прямоугольник)
+        super().__init__()
+        
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         self.screen_rect = self.screen.get_rect()
