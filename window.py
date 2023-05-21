@@ -50,10 +50,13 @@ class AlienInvasion:
             self._update_screen()
 
     def _ship_hit(self):
-        """Обработка столкновения корабля с пришельцем."""
+        """Обработка столкновения корабля с пришельцем"""
         #уменьшение ships_left - число оставшихся кораблей
         if self.stats.ships_left > 1:
+            #уменьшение ships_left и обновление панели счета
             self.stats.ships_left -= 1
+            self.sb.prep_ships()
+
 
             #очистка списков пришельцев и снарядов
             self.aliens.empty()
@@ -161,6 +164,7 @@ class AlienInvasion:
                 self.stats.score += self.settings.alien_points * len(aliens)
             #новая картинка счета
             self.sb.prep_score()
+            self.sb.check_high_score()
         
         #есть ли еще пришельцы
         if not self.aliens:
@@ -169,6 +173,9 @@ class AlienInvasion:
             self._create_fleet()
             #увеличение скорости
             self.settings.increase_speed()
+            #увеличение уровня
+            self.stats.level += 1
+            self.sb.prep_level()
 
 
 
@@ -210,8 +217,9 @@ class AlienInvasion:
             self.stats.reset_stats()
             self.stats.game_active = True
             self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
 
-        
             
             #очистка списков пришельцев и снарядов
             self.aliens.empty()
