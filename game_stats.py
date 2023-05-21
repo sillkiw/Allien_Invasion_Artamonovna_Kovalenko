@@ -12,6 +12,9 @@ class GameStats():
         #флаг для завершения игры после потери последнего корабля
         self.game_active = True
 
+        #хранение рекорда
+        self.high_score = 0
+
         
 
     def reset_stats(self):
@@ -20,3 +23,6 @@ class GameStats():
 
         #начальное число очков(сбрасывается при начале игры)
         self.score = 0
+
+        #текущий уровень
+        self.level = 1
