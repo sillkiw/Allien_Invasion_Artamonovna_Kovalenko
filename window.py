@@ -9,6 +9,7 @@ from allien import Alien
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from animated_sprite import ExplosionFX
 import cv2 
 
 class AlienInvasion:
@@ -29,9 +30,12 @@ class AlienInvasion:
         
         self._create_fleet()
         self.images_explosion = []
+        
+        self.exps = pg.sprite.Group()
         for i in range(0,13):
             text = 'images/explosion/{0}.png'.format(i)
-            self.images_explosion.append(pg.image.load(text))   
+            self.images_explosion.append(pg.transform.scale(pg.image.load(text),(self.ship.rect.width,self.ship.rect.height)) )  
+        self.clock = pg.time.Clock()
         #создание для хранения статистики и панели результатов
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
@@ -42,12 +46,17 @@ class AlienInvasion:
     def run_game(self):
         """Основной цикл"""
         while True:
+            self.clock.tick(120)
             self._check_events()
             if self.stats.game_active:
                 self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
-            
+                self.update_lifetimes()
+                self.delete_exps()
+                self.update_count_frames()
+                self.update_indences()
+                self.update_frames_exps()
             self._update_screen()
             pg.time.delay(0)
 
@@ -136,9 +145,12 @@ class AlienInvasion:
             bullet.draw_bullet()
         #отрисовка пришельца
         self.aliens.draw(self.screen)
-
+    
         #вывод счета
         self.sb.show_score()
+
+        for exp in self.exps.sprites():
+            exp.blitme()
 
         #отображение кнопки Play поверх других поверхностей в том случае, если игра неактивна
         if not self.stats.game_active:
@@ -169,11 +181,14 @@ class AlienInvasion:
         collisions = pg.sprite.groupcollide(self.bullets,self.aliens,True,True)
         #обновление счета
         if collisions:
-          
             self.stats.score += self.settings.alien_points
          
             #1 пришелец += очки за него
             for aliens in collisions.values():
+                for alien in aliens:
+                    x = alien.rect.centerx
+                    y = alien.rect.centery
+                    self.exps.add(ExplosionFX(self.screen, self.images_explosion, 1, x, y))
                 self.stats.score += self.settings.alien_points * len(aliens)
             #новая картинка счета
             self.sb.prep_score()
@@ -269,7 +284,23 @@ class AlienInvasion:
                     self.ship.moving_right=False
           elif event.key == pg.K_LEFT:
                     self.ship.moving_left = False
-    
+    def update_lifetimes(self):
+        for exp in self.exps:
+            exp.update_lifetime()
+    def delete_exps(self):
+        for exp in self.exps:
+            if exp.lifetime == 0:
+                self.exps.remove(exp)
+    def update_frames_exps(self):
+        for exp in self.exps:    
+            exp.update_frame()
+    def update_count_frames(self):
+        for exp in self.exps:
+            exp.update_count_frame()
+    def update_indences(self):
+        for exp in self.exps:
+            exp.update_i()
+  
     def _fire_bullet(self):
           if len(self.bullets) < self.settings.bullets_allowed:
                     firesound = pg.mixer.Sound("sounds/fire.mp3")
@@ -277,7 +308,7 @@ class AlienInvasion:
                     firesound.play(0)
                     new_bullet = Bullet(self)
                     self.bullets.add(new_bullet)
-
+   
 
 
 if __name__ == '__main__':
