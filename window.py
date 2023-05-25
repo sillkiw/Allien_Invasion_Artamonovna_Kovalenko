@@ -46,7 +46,7 @@ class AlienInvasion:
     def run_game(self):
         """Основной цикл"""
         while True:
-            self.clock.tick(120)
+            self.clock.tick(80)
             self._check_events()
             if self.stats.game_active:
                 self.ship.update()
@@ -186,7 +186,7 @@ class AlienInvasion:
             #1 пришелец += очки за него
             for aliens in collisions.values():
                 for alien in aliens:
-                    x = alien.rect.centerx
+                    x = alien.rect.centerx + 20
                     y = alien.rect.centery
                     self.exps.add(ExplosionFX(self.screen, self.images_explosion, 1, x, y))
                 self.stats.score += self.settings.alien_points * len(aliens)
@@ -304,7 +304,7 @@ class AlienInvasion:
     def _fire_bullet(self):
           if len(self.bullets) < self.settings.bullets_allowed:
                     firesound = pg.mixer.Sound("sounds/fire.mp3")
-                    firesound.set_volume(0.1)
+                    firesound.set_volume(0.5)
                     firesound.play(0)
                     new_bullet = Bullet(self)
                     self.bullets.add(new_bullet)
