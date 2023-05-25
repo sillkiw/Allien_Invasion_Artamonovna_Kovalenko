@@ -16,18 +16,15 @@ class AlienInvasion:
     def __init__(self):
         """Инициализация игры, создание окна"""    
         pg.init()
-        self.settings = Settings()
         #полноэкранный режим
         self.screen = pg.display.set_mode((0,0),pg.FULLSCREEN)
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
+        self.settings = Settings(self.screen.get_rect().width,self.screen.get_rect().height)
         self.background = pg.transform.scale(self.settings.bg_image, (self.settings.screen_width, self.settings.screen_height))
-
         self.stats = GameStats(self)
         self.ship = Ship(self)
         self.bullets = pg.sprite.Group()
         self.aliens = pg.sprite.Group()
-    
+        
         self._create_fleet()
         pg.display.set_caption("Alien Invasion")
 
@@ -55,8 +52,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             #уменьшение ships_left и обновление панели счета
             self.stats.ships_left -= 1
-            self.sb.prep_ships()
-
+            self.sb.prep_lives()
 
             #очистка списков пришельцев и снарядов
             self.aliens.empty()
@@ -69,6 +65,7 @@ class AlienInvasion:
             #пауза
             sleep(0.5)
         else:
+            self._reset_game()
             self.stats.game_active = False
             #вернуть видимость курсору мыши после завершения игры
             pg.mouse.set_visible(True)
@@ -129,6 +126,7 @@ class AlienInvasion:
         """Обновление изображения экрана"""
         self.screen.blit(self.background, (0, 0))
         self.ship.blitme()
+      
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         #отрисовка пришельца
@@ -139,10 +137,18 @@ class AlienInvasion:
 
         #отображение кнопки Play поверх других поверхностей в том случае, если игра неактивна
         if not self.stats.game_active:
-            self.play_button.draw_button()
-
+            self._set_game_menu()
+        
         pg.display.flip()
     
+    def _set_game_menu(self):
+          blmask = pg.Surface((self.settings.screen_width,self.settings.screen_height))
+          blmask.fill((0,0,0))
+          blmask.set_alpha(150)
+          self.screen.blit(blmask,(0,0))
+          self.play_button.draw_button()
+
+
     def _update_bullets(self):
         """Обновление позиций снарядов, удаление старых"""
         self.bullets.update()
@@ -165,7 +171,13 @@ class AlienInvasion:
             #новая картинка счета
             self.sb.prep_score()
             self.sb.check_high_score()
-        
+        self.start_new_level()
+       
+       
+       
+       
+       
+    def start_new_level(self):
         #есть ли еще пришельцы
         if not self.aliens:
         # Уничтожение существующих снарядов и создание нового флота.
@@ -210,27 +222,30 @@ class AlienInvasion:
         #отслеживание области нажатия мыши
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-            #сброс игровых настроек(скорости)
-            self.settings.initialize_dynamic_settings()
+            self._reset_game()
+    
+    def _reset_game(self):
+        #сброс игровых настроек(скорости)
+        self.settings.initialize_dynamic_settings()
 
-            #сброс игровой статистики
-            self.stats.reset_stats()
-            self.stats.game_active = True
-            self.sb.prep_score()
-            self.sb.prep_level()
-            self.sb.prep_lives()
+        #сброс игровой статистики
+        self.stats.reset_stats()
+        self.stats.game_active = True
+        self.sb.prep_score()
+        self.sb.prep_level()
+        self.sb.prep_lives()
 
             
             #очистка списков пришельцев и снарядов
-            self.aliens.empty()
-            self.bullets.empty()
+        self.aliens.empty()
+        self.bullets.empty()
             
             #создание нового флота и размещение корабля в центре
-            self._create_fleet()
-            self.ship.center_ship()
+        self._create_fleet()
+        self.ship.center_ship()
 
-            #скрытие курсора мыши
-            pg.mouse.set_visible(False)
+        #скрытие курсора мыши
+        pg.mouse.set_visible(False)
 
     def _check_keydown_events(self,event):
           """Отслеживание нажатия клавиш"""
