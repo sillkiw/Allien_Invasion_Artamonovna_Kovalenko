@@ -1,7 +1,7 @@
 import pygame.font
 from pygame.sprite import Group
 from ship import Ship
- 
+from pygame.sprite import Sprite
 class Scoreboard():
     """Вывод счета"""
     def __init__(self, ai_game):
@@ -20,16 +20,23 @@ class Scoreboard():
         self.prep_score()
         self.prep_high_score()
         self.prep_level()
-        self.prep_ships()
-
-    def prep_ships(self):
-        """Количество оставшихся кораблей."""
-        self.ships = Group()
-        for ship_number in range(self.stats.ships_left):
-            ship = Ship(self.ai_game)
-            ship.rect.x = 10 + ship_number * ship.rect.width
-            ship.rect.y = 10
-            self.ships.add(ship)
+        self.prep_lives()
+    def prep_lives(self):   
+        class Live(Sprite):
+            def __init__(self):
+                super().__init__()
+                self.image = pygame.image.load("images/lives.png")
+                self.rect = self.image.get_rect()
+        """Количество оставшихся жизней."""
+        self.lives = Group()
+        for lives_number in range(self.stats.ships_left):
+            live = Live()
+            live.rect.x = 10 + lives_number * live.rect.width
+            live.rect.x = 10 + lives_number * live.rect.width
+            live.rect.y = 10
+            self.lives.add(live)
+  
+	
 
     def prep_score(self):
         """Преобразование текущего счета в картинку"""
@@ -46,7 +53,7 @@ class Scoreboard():
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)
         self.screen.blit(self.level_image, self.level_rect)
-        self.ships.draw(self.screen)
+        self.lives.draw(self.screen)
 
     def prep_high_score(self):
         """Преобразование рекордного счета в графическое изображение"""
@@ -74,3 +81,5 @@ class Scoreboard():
         self.level_rect = self.level_image.get_rect()
         self.level_rect.right = self.score_rect.right
         self.level_rect.top = self.score_rect.bottom + 10
+
+    
