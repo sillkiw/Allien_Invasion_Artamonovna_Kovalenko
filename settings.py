@@ -1,11 +1,11 @@
 import pygame as pg
 class Settings():
     """Для хранения параметров игры"""
-    def __init__(self):
+    def __init__(self,width,heigth):
         """Инициализвция статических параметров игры"""
         #Параметры экрана
-        self.screen_width = 1000
-        self.screen_height = 600
+        self.screen_width  = width
+        self.screen_height  =heigth
         
         #Изображение корабля и заднего фона
         self.bg_image = pg.image.load("images/background.png")
