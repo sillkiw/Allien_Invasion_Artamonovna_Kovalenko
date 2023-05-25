@@ -186,6 +186,9 @@ class AlienInvasion:
             #1 пришелец += очки за него
             for aliens in collisions.values():
                 for alien in aliens:
+                    explsound =  firesound = pg.mixer.Sound("sounds/expl.mp3")
+                    explsound.set_volume(0.6)
+                    explsound.play()
                     x = alien.rect.centerx + 20
                     y = alien.rect.centery
                     self.exps.add(ExplosionFX(self.screen, self.images_explosion, 1, x, y))
