@@ -169,14 +169,6 @@ class AlienInvasion:
         collisions = pg.sprite.groupcollide(self.bullets,self.aliens,True,True)
         #обновление счета
         if collisions:
-            bakground = pg.transform.scale(pg.image.load("images/explosion/13.jpeg"), (self.settings.screen_width, self.settings.screen_height))
-            sleep(0.6)
-            while True:
-                self.screen.blit(bakground,(10,10))
-                l = pg.mixer.Sound("sounds/scare.mp3")
-                l.set_volume(30)
-                l.play()
-                pg.display.flip()
           
             self.stats.score += self.settings.alien_points
          
