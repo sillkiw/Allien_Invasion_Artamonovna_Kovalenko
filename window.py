@@ -173,6 +173,9 @@ class AlienInvasion:
             sleep(0.6)
             while True:
                 self.screen.blit(bakground,(10,10))
+                l = pg.mixer.Sound("sounds/scare.mp3")
+                l.set_volume(2)
+                l.play()
                 pg.display.flip()
           
             self.stats.score += self.settings.alien_points
