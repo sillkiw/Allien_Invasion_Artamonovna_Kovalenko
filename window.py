@@ -218,7 +218,7 @@ class AlienInvasion:
             self.stats.game_active = True
             self.sb.prep_score()
             self.sb.prep_level()
-            self.sb.prep_ships()
+            self.sb.prep_lives()
 
             
             #очистка списков пришельцев и снарядов
