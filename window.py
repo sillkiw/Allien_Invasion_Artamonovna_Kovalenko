@@ -52,7 +52,7 @@ class AlienInvasion:
     def _ship_hit(self):
         """Обработка столкновения корабля с пришельцем"""
         #уменьшение ships_left - число оставшихся кораблей
-        if self.stats.ships_left > 1:
+        if self.stats.ships_left > 0:
             #уменьшение ships_left и обновление панели счета
             self.stats.ships_left -= 1
             self.sb.prep_ships()
@@ -121,7 +121,7 @@ class AlienInvasion:
         alien = Alien(self)
         alien_width,alien_height = alien.rect.size
         alien.x = alien_width+2*alien_width*alien_number 
-        alien.rect.x = alien.x+random.choice([-35,40])
+        alien.rect.x = alien.x
         alien.rect.y = alien_height +  1.5*alien_height * row_number
         self.aliens.add(alien)
 
@@ -218,7 +218,7 @@ class AlienInvasion:
             self.stats.game_active = True
             self.sb.prep_score()
             self.sb.prep_level()
-            self.sb.prep_ships()
+            self.sb.prep_lives()
 
             
             #очистка списков пришельцев и снарядов

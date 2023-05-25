@@ -12,12 +12,12 @@ class Settings():
         self.shp_image = pg.image.load("images/ship.png")
         
         #Скорость корабля
-        self.ship_speed = 6.5
+        self.ship_speed = 10
         #ограничение кол-ва кораблей на игру
         self.ship_limit = 3
         
         #параметры стрельбы
-        self.bullet_speed = 7.5
+        self.bullet_speed = 15
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (0,0,255)
@@ -26,9 +26,9 @@ class Settings():
         #параметры пришельцев
 
         #скорость движения в сторону
-        self.alien_speed = 4
+        self.alien_speed = 8
         #скорость снижения
-        self.fleet_drop_speed = 30
+        self.fleet_drop_speed = 10
         #направление(1 - вправо, -1 - влево)
         self.fleet_direction = 1
 
