@@ -17,10 +17,15 @@ class Scoreboard():
         self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
         #изображение счета, уровня, чило жизней
-        self.prep_score()
-        self.prep_high_score()
-        self.prep_level()
-        self.prep_lives()
+        self.prep_images()
+    
+    
+    def prep_images(self):
+       self.prep_score()
+       self.prep_high_score()
+       self.prep_level()
+       self.prep_lives()
+    
     def prep_lives(self):   
         class Live(Sprite):
             def __init__(self):
@@ -36,7 +41,8 @@ class Scoreboard():
             live.rect.y = 10
             self.lives.add(live)
   
-	
+
+
 
     def prep_score(self):
         """Преобразование текущего счета в картинку"""
