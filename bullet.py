@@ -14,7 +14,6 @@ class Bullet(Sprite):
         self.rect = pg.Rect(0,0,self.settings.bullet_width,
         self.settings.bullet_height)
         self.rect.midtop = ai_game.ship.rect.midtop
-        self.rect.x += choice([-10,10])
         self.rect.y += 10
         #позиция снаряда
         self.y = float(self.rect.y)
