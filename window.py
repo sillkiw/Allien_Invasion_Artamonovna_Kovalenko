@@ -9,13 +9,15 @@ from allien import Alien
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
-
+import cv2 
 
 class AlienInvasion:
     '''Управление поведением игры'''
     def __init__(self):
         """Инициализация игры, создание окна"""    
         pg.init()
+        pg.display.set_caption("Alien Invasion")
+
         #полноэкранный режим
         self.screen = pg.display.set_mode((0,0),pg.FULLSCREEN)
         self.settings = Settings(self.screen.get_rect().width,self.screen.get_rect().height)
@@ -26,8 +28,10 @@ class AlienInvasion:
         self.aliens = pg.sprite.Group()
         
         self._create_fleet()
-        pg.display.set_caption("Alien Invasion")
-
+        self.images_explosion = []
+        for i in range(0,13):
+            text = 'images/explosion/{0}.png'.format(i)
+            self.images_explosion.append(pg.image.load(text))   
         #создание для хранения статистики и панели результатов
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
@@ -45,6 +49,7 @@ class AlienInvasion:
                 self._update_aliens()
             
             self._update_screen()
+            pg.time.delay(0)
 
     def _ship_hit(self):
         """Обработка столкновения корабля с пришельцем"""
@@ -63,7 +68,7 @@ class AlienInvasion:
             self.ship.center_ship()
 
             #пауза
-            sleep(0.5)
+            sleep(0.3)
         else:
             self._reset_game()
             self.stats.game_active = False
@@ -164,7 +169,14 @@ class AlienInvasion:
         collisions = pg.sprite.groupcollide(self.bullets,self.aliens,True,True)
         #обновление счета
         if collisions:
+            bakground = pg.transform.scale(pg.image.load("images/explosion/13.jpeg"), (self.settings.screen_width, self.settings.screen_height))
+            sleep(0.6)
+            while True:
+                self.screen.blit(bakground,(10,10))
+                pg.display.flip()
+          
             self.stats.score += self.settings.alien_points
+         
             #1 пришелец += очки за него
             for aliens in collisions.values():
                 self.stats.score += self.settings.alien_points * len(aliens)
@@ -231,10 +243,7 @@ class AlienInvasion:
         #сброс игровой статистики
         self.stats.reset_stats()
         self.stats.game_active = True
-        self.sb.prep_score()
-        self.sb.prep_level()
-        self.sb.prep_lives()
-
+        self.sb.prep_images()
             
             #очистка списков пришельцев и снарядов
         self.aliens.empty()
@@ -256,7 +265,7 @@ class AlienInvasion:
           #нажатие клавиши q для выхода из игры  
           elif event.key == pg.K_q:
                     sys.exit()
-          elif event.key == pg.K_SPACE:
+          elif event.key == pg.K_SPACE and self.stats.game_active:
                     self._fire_bullet()
     
     def _check_keyup_events(self,event):
@@ -268,7 +277,9 @@ class AlienInvasion:
     
     def _fire_bullet(self):
           if len(self.bullets) < self.settings.bullets_allowed:
-                    pg.mixer.Sound("sounds/fire.mp3").play()
+                    firesound = pg.mixer.Sound("sounds/fire.mp3")
+                    firesound.set_volume(0.1)
+                    firesound.play(0)
                     new_bullet = Bullet(self)
                     self.bullets.add(new_bullet)
 
