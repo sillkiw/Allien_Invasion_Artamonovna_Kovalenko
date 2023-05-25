@@ -8,9 +8,7 @@ class GameStats():
 
         #запуск игры в неактивном состоянии
         self.game_active = False
-
-        #флаг для завершения игры после потери последнего корабля
-        self.game_active = True
+      
 
         #хранение рекорда
         self.high_score = 0
