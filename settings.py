@@ -23,12 +23,12 @@ class Settings():
         self.bullet_height = 15
         self.bullet_color = (128, 166, 255)
         self.bullets_allowed = 3
-
+        self.max_len_block = 3
         #параметры пришельцев
         self.allien_bullets_allowed = 1
         #скорость движения в сторону
         self.alien_speed = 5
-        self.alien_bullet_speed =6
+        self.alien_bullet_speed =4
         #скорость снижения
         self.fleet_drop_speed = 10
         #направление(1 - вправо, -1 - влево)
@@ -58,6 +58,7 @@ class Settings():
         self.allien_bullets_allowed = 1
         #подсчет очков
         self.alien_points = 10
+        self.max_len_block = 3
 
     def increase_speed(self):
         """Увеличение скорости и очков за пришельцев"""
@@ -66,5 +67,8 @@ class Settings():
         self.alien_speed_factor *= self.speedup_scale+0.2
         if self.ai_game.stats.level >= 3:
             self.allien_bullets_allowed *= 1.1
-            self.alien_bullet_speed *= self.speedup_scale
+            self.alien_bullet_speed *= 1.1
+        if self.ai_game.stats.level >=5 :
+            self.max_len_block = 3
+            self.max_len_block *= 1.1
         self.alien_points = int(self.alien_points * self.score_scale)
