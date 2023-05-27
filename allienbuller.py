@@ -6,7 +6,7 @@ class AllienBullet(Bullet):
         self.color = (255, 0, 0)
         
         #начальное положение снарядов
-        self.rect = pg.Rect(0,0,self.settings.bullet_width+2,
+        self.rect = pg.Rect(0,0,self.settings.bullet_width,
         self.settings.bullet_height+10)
         self.rect.midtop = allien.rect.midtop
         self.rect.y += 30
@@ -18,7 +18,5 @@ class AllienBullet(Bullet):
         #обновление позиции снаряда при полете
         self.rect.y = self.y
     
-    def draw_bullet(self):
-        """Отрисовка снаряда"""
-        pg.draw.circle(self.screen,self.color,(self.rect.x,self.rect.y),8)
+   
         
