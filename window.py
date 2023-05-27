@@ -52,7 +52,7 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
-                if self.stats.level >= 2:
+                if self.stats.level >= 1:
                     self._alien_shoot()
                     self._update_allien_bullets()
                 self.update_lifetimes()
@@ -60,56 +60,85 @@ class AlienInvasion:
                 self.update_count_frames()
                 self.update_indences()
                 self.update_frames_exps()
+                self.start_new_level()
             self._update_screen()
+            
             pg.time.delay(0)
 
     def _ship_hit(self):
         """Обработка столкновения корабля с пришельцем"""
         #уменьшение ships_left - число оставшихся кораблей
-        if self.stats.ships_left > 0:
+        if self.stats.ships_left > 1:
             #уменьшение ships_left и обновление панели счета
             self.stats.ships_left -= 1
             self.sb.prep_lives()
 
             #очистка списков пришельцев и снарядов
-            self.aliens.empty()
+            self.avaibshot = True
             self.bullets.empty()
-
+            self.allien_bullets.empty()
             #создание нового флота и размещение корабля в центре
-            self._create_fleet()
-            self.ship.center_ship()
-
+        
+            explsound =  firesound = pg.mixer.Sound("sounds/expl.mp3")
+            explsound.set_volume(0.6)
+            explsound.play()
+            x = self.ship.rect.centerx + 20
+            y = self.ship.rect.centery
+            self.exps.add(ExplosionFX(self.screen, self.images_explosion, 1, x, y))
             #пауза
-            sleep(0.3)
+    
         else:
-            self._reset_game()
+            explsound = pg.mixer.Sound("sounds/expl.mp3")
+            explsound.set_volume(0.6)
+            explsound.play()
+            x = self.ship.rect.centerx + 20
+            y = self.ship.rect.centery
+            self.exps.add(ExplosionFX(self.screen, self.images_explosion, 1, x, y))
+            duration = 0
+            self.allien_bullets.empty()
+            while duration < 40:
+                self.update_lifetimes()
+                self.delete_exps()
+                self.update_count_frames()
+                self.update_indences()
+                self.update_frames_exps()
+                self._update_exp()
+                duration+=0.5
+                pg.time.delay(10)
+            
+            self.start_new_level()
             self.stats.game_active = False
-            #вернуть видимость курсору мыши после завершения игры
             pg.mouse.set_visible(True)
+            
+
 
     def _update_allien_bullets(self):
         self.allien_bullets.update()
 
         for bullet in self.allien_bullets.copy():
-            if bullet.rect.bottom >= self.settings.screen_height:
+            if bullet.rect.bottom >= self.settings.screen_height+100:
                 self.allien_bullets.remove(bullet) 
+            if bullet.rect.y > self.settings.screen_height-70:
+                self.avaibshot =True
         self._check_allien_shot()
     
     def _check_allien_shot(self):
-        collisions = pg.sprite.groupcollide
+        collisions = pg.sprite.spritecollideany(self.ship,self.allien_bullets)
+        if collisions:
+            self._ship_hit()
 
            
 
     def _alien_shoot(self):  
         y = 0
-        aliensh = pg.sprite.Group()
+       
         shotal = {}
         for alien in self.aliens.sprites():
             if alien.rect.x not in shotal:
                 shotal[alien.rect.x] = alien
             elif alien.rect.y > shotal[alien.rect.x].rect.y:
                 shotal[alien.rect.x] = alien
-        if  len(self.allien_bullets) < self.settings.allien_bullets_allowed:
+        if self.avaibshot and  len(self.allien_bullets) <2:
             al1 = shotal.values()
             al1 = random.choice(list(al1))  
             explsound =  firesound = pg.mixer.Sound("sounds/alshot.mp3")
@@ -170,6 +199,11 @@ class AlienInvasion:
         alien.rect.x = alien.x
         alien.rect.y = alien_height +  1.5*alien_height * row_number
         self.aliens.add(alien)
+
+    def _update_exp(self):
+        for exp in self.exps.sprites():
+            exp.blitme()
+        pg.display.flip()
 
     def _update_screen(self):
         """Обновление изображения экрана"""
@@ -234,7 +268,6 @@ class AlienInvasion:
             #новая картинка счета
             self.sb.prep_score()
             self.sb.check_high_score()
-        self.start_new_level()
        
        
        
@@ -247,7 +280,9 @@ class AlienInvasion:
         # Уничтожение существующих снарядов и создание нового флота.
             self.bullets.empty()
             self.allien_bullets.empty()
+            self.aliens.empty()
             self._create_fleet()
+            self.avaibshot = True
             #увеличение скорости
             self.settings.increase_speed()
             #увеличение уровня
@@ -297,11 +332,11 @@ class AlienInvasion:
         self.stats.reset_stats()
         self.stats.game_active = True
         self.sb.prep_images()
-            
+        self.avaibshot = True
             #очистка списков пришельцев и снарядов
         self.aliens.empty()
         self.bullets.empty()
-            
+        self.allien_bullets.empty()
             #создание нового флота и размещение корабля в центре
         self._create_fleet()
         self.ship.center_ship()
