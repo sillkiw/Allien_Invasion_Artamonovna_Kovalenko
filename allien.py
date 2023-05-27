@@ -9,8 +9,8 @@ class Alien(Sprite):
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         
-        #изображение пришельца
-        self.image = pg.transform.scale(pg.image.load('images/aliensh.png').convert_alpha(),(84,84))
+        #изображение пришельца5
+        self.image = pg.transform.scale(pg.image.load('images/aliensh.png').convert_alpha(),(80,80))
         self.rect = self.image.get_rect()
 
         #создание нового пришельца в левом верхнем углу
