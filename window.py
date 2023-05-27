@@ -10,8 +10,8 @@ from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
 from animated_sprite import ExplosionFX
-import cv2 
-
+from allienbuller import AllienBullet
+from random import sample
 class AlienInvasion:
     '''Управление поведением игры'''
     def __init__(self):
@@ -21,16 +21,16 @@ class AlienInvasion:
 
         #полноэкранный режим
         self.screen = pg.display.set_mode((0,0),pg.FULLSCREEN)
-        self.settings = Settings(self.screen.get_rect().width,self.screen.get_rect().height)
+        self.settings = Settings(self,self.screen.get_rect().width,self.screen.get_rect().height)
         self.background = pg.transform.scale(self.settings.bg_image, (self.settings.screen_width, self.settings.screen_height))
         self.stats = GameStats(self)
         self.ship = Ship(self)
         self.bullets = pg.sprite.Group()
         self.aliens = pg.sprite.Group()
-        
+        self.allien_bullets = pg.sprite.Group()
         self._create_fleet()
         self.images_explosion = []
-        
+        self.avaibshot = True
         self.exps = pg.sprite.Group()
         for i in range(0,13):
             text = 'images/explosion/{0}.png'.format(i)
@@ -52,6 +52,9 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_bullets()
                 self._update_aliens()
+                if self.stats.level >= 2:
+                    self._alien_shoot()
+                    self._update_allien_bullets()
                 self.update_lifetimes()
                 self.delete_exps()
                 self.update_count_frames()
@@ -84,6 +87,38 @@ class AlienInvasion:
             #вернуть видимость курсору мыши после завершения игры
             pg.mouse.set_visible(True)
 
+    def _update_allien_bullets(self):
+        self.allien_bullets.update()
+
+        for bullet in self.allien_bullets.copy():
+            if bullet.rect.bottom >= self.settings.screen_height:
+                self.allien_bullets.remove(bullet) 
+        self._check_allien_shot()
+    
+    def _check_allien_shot(self):
+        collisions = pg.sprite.groupcollide
+
+           
+
+    def _alien_shoot(self):  
+        y = 0
+        aliensh = pg.sprite.Group()
+        shotal = {}
+        for alien in self.aliens.sprites():
+            if alien.rect.x not in shotal:
+                shotal[alien.rect.x] = alien
+            elif alien.rect.y > shotal[alien.rect.x].rect.y:
+                shotal[alien.rect.x] = alien
+        if  len(self.allien_bullets) < self.settings.allien_bullets_allowed:
+            al1 = shotal.values()
+            al1 = random.choice(list(al1))  
+            explsound =  firesound = pg.mixer.Sound("sounds/alshot.mp3")
+            explsound.set_volume(0.2)
+            explsound.play()
+            self.avaibshot = False
+            self.allien_bullets.add(AllienBullet(self,al1))
+            
+
     def _create_fleet(self):
         """Создание флота пришельцев"""
         #создание одного пришельца
@@ -96,9 +131,9 @@ class AlienInvasion:
         number_aliens_x = available_space_x // (2*alien_width)
 
         #кол-во рядов пришельцев
-        ship_height = self.ship.rect.height
+        ship_height = self.ship.rect.height 
         available_space_y = self.settings.screen_height - (alien_height)-ship_height
-        number_rows = available_space_y // (2*alien_height)
+        number_rows = available_space_y // (2*alien_height) 
         #создание флота пришельцев
         for row_number in range(number_rows):
             #создание ряда пришельцев
@@ -143,6 +178,9 @@ class AlienInvasion:
       
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
+        
+        for allien_bullet in self.allien_bullets.sprites():
+            allien_bullet.draw_bullet()
         #отрисовка пришельца
         self.aliens.draw(self.screen)
     
@@ -205,8 +243,10 @@ class AlienInvasion:
     def start_new_level(self):
         #есть ли еще пришельцы
         if not self.aliens:
+            
         # Уничтожение существующих снарядов и создание нового флота.
             self.bullets.empty()
+            self.allien_bullets.empty()
             self._create_fleet()
             #увеличение скорости
             self.settings.increase_speed()
