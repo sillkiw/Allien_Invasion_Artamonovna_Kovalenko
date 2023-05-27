@@ -1,24 +1,9 @@
-import pygame_menu
 import pygame as pg
-
-pg.init()
-surface = pg.display.set_mode((600, 400))
-
-def set_difficulty(value, difficulty):
-    
-    pass
-
-def start_the_game():
-    pass
-
-menu = pygame_menu.Menu('Welcome', 400, 300,
-                       theme = pygame_menu.themes.THEME_BLUE)
-
-menu.add.text_input('Name :', default = 'User Name')
-menu.add.selector('Difficulty :', [('Hard', 1), ('Easy', 2)], onchange=set_difficulty)
-menu.add.button('Play', start_the_game)
-menu.add.button('Quit', pygame_menu.events.EXIT)
-
-
-
-menu.mainloop(surface)
+class Menu:
+    def __init__(self):
+        self._callbacks = []
+        self.current_option_index = 0
+        self._current_option_index = 0
+        self.font = pg.font.SysFont(None, 48)
+    def append_option(self,option,callback):
+        self._option_surfaces.append(self.font.render(option,True,(255,255,255)))
